@@ -1,0 +1,51 @@
+# Tests to verify search functionality (search bar)
+
+### 1. Legacy search with search parameter (should search in multiple fields)
+GET http://localhost:3001/contacts?search=sarah
+
+###
+
+### 2. Search by name
+GET http://localhost:3001/contacts?search=johnson
+
+###
+
+### 3. Search by email
+GET http://localhost:3001/contacts?search=microsoft.com
+
+###
+
+### 4. Search by company
+GET http://localhost:3001/contacts?search=tesla
+
+###
+
+### 5. Search by phone  
+GET http://localhost:3001/contacts?search=555
+
+###
+
+### 6. Search by position
+GET http://localhost:3001/contacts?search=manager
+
+###
+
+### 7. Search that should find nothing
+GET http://localhost:3001/contacts?search=xyz123notfound
+
+###
+
+### 8. Search combined with pagination
+GET http://localhost:3001/contacts?search=sarah&skip=0&take=5
+
+###
+
+### 9. Search with sorting
+GET http://localhost:3001/contacts?search=manager&sort=[{"field":"name","direction":"asc"}]
+
+###
+
+### 10. Verify that empty search returns all contacts
+GET http://localhost:3001/contacts?search=
+
+###

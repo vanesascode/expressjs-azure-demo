@@ -1,0 +1,168 @@
+# API Tests for Contacts with New Paginated Structure - Tests with REST Client
+
+# Note: The API now uses skip/take/filters/sort structure instead of page/size
+# New parameters:
+# - skip: Number of results to skip (replaces page calculation)
+# - take: Number of results to take (replaces size, empty = all results)
+# - filters: JSON array of filter objects [{field, value, operator}]
+# - sort: JSON array of sort objects [{field, direction}]
+
+###
+
+### 1. Get first 10 contacts (using skip/take)
+GET http://localhost:3001/contacts?skip=0&take=10
+
+###
+
+### 2. Get all contacts (take parameter empty)
+GET http://localhost:3001/contacts
+
+###
+
+### 3. Get contacts with skip and take
+GET http://localhost:3001/contacts?skip=5&take=5
+
+###
+
+### 4. Get contacts with sorting by name ascending
+GET http://localhost:3001/contacts?skip=0&take=10&sort=[{"field":"name","direction":"asc"}]
+
+###
+
+### 5. Get contacts with sorting by company descending  
+GET http://localhost:3001/contacts?skip=5&take=5&sort=[{"field":"company","direction":"desc"}]
+
+###
+
+### 6. Get contacts with sorting by email descending
+GET http://localhost:3001/contacts?skip=0&take=10&sort=[{"field":"email","direction":"desc"}]
+
+###
+
+### 7. Get contacts with multiple sort criteria
+GET http://localhost:3001/contacts?skip=0&take=8&sort=[{"field":"company","direction":"asc"},{"field":"name","direction":"asc"}]
+
+###
+
+### 8. Search contacts by name using filters
+GET http://localhost:3001/contacts?skip=0&take=8&filters=[{"field":"name","value":"sarah","operator":"contains"}]
+
+###
+
+### 9. Search contacts by company using filters
+GET http://localhost:3001/contacts?skip=0&take=8&filters=[{"field":"company","value":"microsoft","operator":"contains"}]
+
+###
+
+### 10. Search contacts by email domain using filters
+GET http://localhost:3001/contacts?skip=0&take=8&filters=[{"field":"email","value":"@tesla.com","operator":"contains"}]
+
+###
+
+### 11. Search contacts by phone using filters
+GET http://localhost:3001/contacts?skip=0&take=8&filters=[{"field":"phone1","value":"555","operator":"contains"}]
+
+###
+
+### 12. Search contacts by company using filters
+GET http://localhost:3001/contacts?skip=0&take=8&filters=[{"field":"company","value":"tesla","operator":"contains"}]
+
+###
+
+### 13. Combined filters and sorting
+GET http://localhost:3001/contacts?skip=0&take=8&filters=[{"field":"company","value":"microsoft","operator":"contains"}]&sort=[{"field":"name","direction":"asc"}]
+
+###
+
+### 14. Multiple filters (AND condition)
+GET http://localhost:3001/contacts?skip=0&take=8&filters=[{"field":"company","value":"microsoft","operator":"contains"},{"field":"email","value":"@microsoft","operator":"contains"}]
+
+###
+
+### 15. Search with no results
+GET http://localhost:3001/contacts?skip=0&take=8&filters=[{"field":"name","value":"nonexistent","operator":"contains"}]
+
+###
+
+### 16. Test pagination beyond available data
+GET http://localhost:3001/contacts?skip=999&take=10
+
+###
+
+### 17. Legacy support - using search parameter (backwards compatibility)
+GET http://localhost:3001/contacts?skip=0&take=8&search=sarah
+
+###
+
+### 18. Get a specific contact by ID (using query parameter)
+GET http://localhost:3001/contacts?id=1001
+
+###
+
+### 19. Create a new contact
+POST http://localhost:3001/contacts
+Content-Type: application/json
+
+{
+  "name": "Test User with New Structure",
+  "email": "test.newstructure@example.com",
+  "company": "New Structure Test Company",
+  "phone1": "+1 555-0123"
+}
+
+###
+
+### 20. Update a contact completely (ID in body)
+PUT http://localhost:3001/contacts
+Content-Type: application/json
+
+{
+  "id": 1001,
+  "name": "Sarah Johnson Updated via New API",
+  "email": "sarah.johnson.newapi@microsoft.com",
+  "company": "Microsoft Corporation",
+  "phone1": "+1 (206) 555-0123",
+  "phone2": "+1 (206) 555-0124"
+}
+
+###
+
+### 21. Delete a specific contact (use with caution)
+# DELETE http://localhost:3001/contacts?id=1001
+
+###
+
+### 22. Delete multiple contacts (use with caution)
+DELETE http://localhost:3001/contacts
+Content-Type: application/json
+
+{
+  "ids": [1001, 1007]
+}
+
+###
+
+### ERROR CASES FOR TESTING
+
+### 23. Contact not found
+GET http://localhost:3001/contacts?id=99999
+
+###
+
+### 24. Delete contacts with invalid IDs
+DELETE http://localhost:3001/contacts
+Content-Type: application/json
+
+{
+  "ids": [99999, 88888]
+}
+
+###
+
+### 25. Delete without providing IDs (error)
+DELETE http://localhost:3001/contacts
+Content-Type: application/json
+
+{
+  "ids": []
+}

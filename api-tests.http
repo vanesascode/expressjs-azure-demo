@@ -1,0 +1,149 @@
+# API Tests for Contacts with New Paginated Structure - Tests with REST Client
+
+# Note: Press Ctrl+Alt+# DELETE http://localhost:3001/contacts/1001
+
+###
+
+### 13. Delete multiple contacts (use with caution)click "Send Request" above each block to execute
+# New API structure uses skip/take/filters/sort instead of page/size/sortBy/sortDirection
+
+###
+
+### 1. Get first 10 contacts (using skip/take)
+GET http://localhost:3001/contacts?skip=0&take=10
+
+###
+
+### 2. Get all contacts (take parameter empty - returns all)
+GET http://localhost:3001/contacts
+
+###
+
+### 3. Get contacts with pagination using skip/take
+GET http://localhost:3001/contacts?skip=5&take=5
+
+###
+
+### 4. Get a specific contact by ID (using query parameter)
+GET http://localhost:3001/contacts?id=1001
+
+###
+
+### 5. Get contacts with sorting by name ascending
+GET http://localhost:3001/contacts?skip=0&take=5&sort=[{"field":"name","direction":"asc"}]
+
+###
+
+### 6. Get contacts with sorting by company descending
+GET http://localhost:3001/contacts?skip=5&take=5&sort=[{"field":"company","direction":"desc"}]
+
+###
+
+### 7. Get contacts sorted by email descending
+GET http://localhost:3001/contacts?skip=0&take=10&sort=[{"field":"email","direction":"desc"}]
+
+###
+
+### 8. Get contacts sorted by name ascending
+GET http://localhost:3001/contacts?skip=0&take=8&sort=[{"field":"name","direction":"asc"}]
+
+###
+
+### 9. Test pagination beyond available data
+GET http://localhost:3001/contacts?skip=999&take=10
+
+###
+
+### 10. Test with large take value (should return all)
+GET http://localhost:3001/contacts?skip=0&take=9999
+
+###
+
+### 11. Create a new contact
+POST http://localhost:3001/contacts
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "user@example.com",
+  "company": "Example Company",
+  "phone1": "+34 666 123 456"
+}
+
+###
+
+### 12. Update a contact completely (change ID if necessary)
+PUT http://localhost:3001/contacts/1001
+Content-Type: application/json
+
+{
+  "name": "Sarah Johnson Updated",
+  "email": "sarah.updated@microsoft.com",
+  "company": "Microsoft Corporation",
+  "phone1": "+1 (206) 555-0123",
+  "phone2": "+1 (206) 555-0124"
+}
+
+###
+
+### 12. Delete a specific contact (use with caution)
+# DELETE http://localhost:3001/contacts?id=1001
+
+###
+
+### 13. Delete multiple contacts (use with caution)
+DELETE http://localhost:3001/contacts
+Content-Type: application/json
+
+{
+  "ids": [1001, 1007]
+}
+
+###
+
+### ERROR CASES FOR TESTING
+
+### 14. Contact not found
+GET http://localhost:3001/contacts?id=99999
+
+###
+
+### 15. Create contact without required fields
+POST http://localhost:3001/contacts
+Content-Type: application/json
+
+{
+  "name": "Incomplete User"
+}
+
+###
+
+### 16. Email with invalid format
+POST http://localhost:3001/contacts
+Content-Type: application/json
+
+{
+  "name": "Bad Email User",
+  "email": "invalid-email",
+  "company": "Test Company"
+}
+
+###
+
+### 17. Delete contacts with invalid IDs
+DELETE http://localhost:3001/contacts
+Content-Type: application/json
+
+{
+  "ids": [99999, 88888]
+}
+
+###
+
+### 18. Delete without providing IDs (error)
+DELETE http://localhost:3001/contacts
+Content-Type: application/json
+
+{
+  "ids": []
+}
