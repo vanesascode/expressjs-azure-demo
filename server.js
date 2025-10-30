@@ -227,6 +227,10 @@ function filterContacts(contacts, searchTerm) {
 
 // ENDPOINTS
 
+app.get("/", (req, res) => {
+  res.json({ message: "Hello World" });
+});
+
 // GET /contacts - Get paginated contacts with new structure OR get specific contact by ID
 app.get("/contacts", async (req, res) => {
   try {
